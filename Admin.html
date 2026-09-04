@@ -30,63 +30,60 @@ a{color:var(--gold);text-decoration:none}
 </style>
 </head>
 <body>
-
 <div id="lock" class="lock">
-  <div class="tag">HGTV8 PRIVATE ADMIN</div>
-  <h2 style="margin:0 0 8px">Masuk Admin</h2>
-  <p class="sub">Halaman ini tidak untuk buyer. Masukkan password admin.</p>
-  <input id="pass" type="password" placeholder="Password admin HGTV8">
-  <button class="btn" onclick="unlock()">BUKA GENERATOR</button>
-  <p class="small">Default password: <b>hermesv8admin</b> — ganti di file admin.html baris 78</p>
+<div class="tag">HGTV8 PRIVATE ADMIN</div>
+<h2 style="margin:0 0 8px">Masuk Admin</h2>
+<p class="sub">Halaman ini tidak untuk buyer. Masukkan password admin.</p>
+<input id="pass" type="password" placeholder="Password admin HGTV8">
+<button class="btn" onclick="unlock()">BUKA GENERATOR</button>
+<p class="small">Ganti password default di file Admin.html baris yang berisi ADMIN_PASS.</p>
 </div>
 
 <div id="app" class="card" style="display:none">
-  <div class="tag">PREMIUM LICENSE GENERATOR</div>
-  <div class="h">HERMES GOLD TERMINAL V8</div>
-  <div class="sub">Generate private terminal link untuk buyer. Link auto noindex (tidak ke-index Google).</div>
+<div class="tag">PREMIUM LICENSE GENERATOR</div>
+<div class="h">HERMES GOLD TERMINAL V8</div>
+<div class="sub">Generate private terminal link untuk buyer. Link auto noindex (tidak ke-index Google).</div>
 
-  <label>Email Buyer</label>
-  <input id="email" type="email" placeholder="widya00451477@gmail.com" value="widya00451477@gmail.com">
+<label>Email Buyer</label>
+<input id="email" type="email" placeholder="buyer@email.com">
 
-  <div class="row">
-    <div>
-      <label>MT5 Account</label>
-      <input id="mt5" type="text" placeholder="10905323" value="10905323">
-    </div>
-    <div>
-      <label>Expiry (hari)</label>
-      <input id="exp" type="number" placeholder="365" value="365">
-    </div>
-  </div>
+<div class="row">
+<div>
+<label>MT5 Account</label>
+<input id="mt5" type="text" placeholder="10905323">
+</div>
+<div>
+<label>Expiry (hari)</label>
+<input id="exp" type="number" placeholder="365" value="365">
+</div>
+</div>
 
-  <label>License Key (auto)</label>
-  <div class="row">
-    <div><input id="key" type="text" readonly placeholder="Klik Generate"></div>
-    <div><button class="btn" style="margin-top:0" onclick="genKey()">🎲 GENERATE KEY</button></div>
-  </div>
+<label>License Key (auto)</label>
+<div class="row">
+<div><input id="key" type="text" readonly placeholder="Klik Generate"></div>
+<div><button class="btn" style="margin-top:0" onclick="genKey()">🎲 GENERATE KEY</button></div>
+</div>
 
-  <button class="btn" onclick="generate()">✨ GENERATE PRIVATE LINK</button>
-  <button class="btn btn2" onclick="generate(true)">🔄 GENERATE + COPY WA TEMPLATE</button>
+<button class="btn" onclick="generate()">✨ GENERATE PRIVATE LINK</button>
+<button class="btn btn2" onclick="generate(true)">🔄 GENERATE + COPY WA TEMPLATE</button>
 
-  <div id="out" class="keybox"></div>
+<div id="out" class="keybox"></div>
+<div id="acts" class="actions">
+<button class="btn btn2" onclick="copyLink()">📋 Copy Link</button>
+<button class="btn btn2" onclick="copyWA()">💬 Copy WA Template</button>
+<button class="btn btn2" onclick="openLink()">🚀 Buka Link</button>
+</div>
 
-  <div id="acts" class="actions">
-    <button class="btn btn2" onclick="copyLink()">📋 Copy Link</button>
-    <button class="btn btn2" onclick="copyWA()">💬 Copy WA Template</button>
-    <button class="btn btn2" onclick="openLink()">🚀 Buka Link</button>
-  </div>
-
-  <p class="small">Base URL: <span id="baseUrl" style="color:#aaa"></span><br>
-  File ini simpan di repo hgtv8-terminal sebagai <b>admin.html</b>. Jangan share link admin.html ke buyer. Buyer hanya dapat link dengan <code>?email=&key=&mt5=</code><br><br>
-  Next: #2 License Lock + #3 Lynk.id Sales Page</p>
+<p class="small">Base URL: <span id="baseUrl" style="color:#aaa"></span><br>
+File ini simpan di repo hgtv8-terminal sebagai <b>Admin.html</b>. Jangan share link Admin.html ke buyer. Buyer hanya dapat link dengan <code>?email=&key=&mt5=&exp=&gen=</code><br><br>
+Parameter <b>gen</b> = timestamp saat link dibuat, dipakai index.html untuk hitung expiry (gen + exp hari). Jangan diedit manual.</p>
 </div>
 
 <script>
-const ADMIN_PASS = "hermesv8admin"; // GANTI PASSWORD DISINI
+const ADMIN_PASS = "hermesv8admin"; // GANTI PASSWORD DISINI — jangan pakai default ini di produksi
 const BASE = "https://antonntlnewlife-071199.github.io/hgtv8-terminal/";
 let lastLink = "";
 let lastWA = "";
-
 document.getElementById('baseUrl').textContent = BASE;
 
 function unlock(){
@@ -94,7 +91,7 @@ function unlock(){
     document.getElementById('lock').style.display='none';
     document.getElementById('app').style.display='block';
     genKey();
-  } else { alert('Password salah! Default: hermesv8admin'); }
+  } else { alert('Password salah!'); }
 }
 
 function genKey(){
@@ -111,13 +108,18 @@ function generate(withWA=false){
   const key=document.getElementById('key').value.trim()||genKey();
   const exp=document.getElementById('exp').value.trim()||"365";
   if(!email||!mt5){alert('Isi email & MT5 dulu!');return;}
-  const params = new URLSearchParams({email, key, mt5, exp});
+
+  const gen = Date.now(); // timestamp generate — dipakai index.html untuk validasi expiry
+  const params = new URLSearchParams({email, key, mt5, exp, gen});
   lastLink = BASE + "?" + params.toString();
-  lastWA = `Halo! 🎉\n\nTerima kasih sudah order *HERMES GOLD TERMINAL V8*!\n\n🔑 PRIVATE TERMINAL ANDA (JANGAN SHARE):\n${lastLink}\n\n📦 Isi Terminal:\n• License Key: ${key}\n• MT5: ${mt5}\n• Expiry: ${exp} hari\n• Download EA V8 (.ex5) + Set File + Panduan Bilingual\n• Grup Telegram Private\n\n📖 Cara Pasang (2 Menit): Buka link di atas → Download EA → Pasang di MT5 → Load Set File\n\nButuh bantuan? Balas WA ini ya.\n\n- Antonius | HGTV8`;
+
+  const expiryDateStr = new Date(gen + Number(exp)*24*60*60*1000).toLocaleDateString('id-ID', {year:'numeric', month:'long', day:'numeric'});
+
+  lastWA = `Halo! 🎉\n\nTerima kasih sudah order *HERMES GOLD TERMINAL V8*!\n\n🔑 PRIVATE TERMINAL ANDA (JANGAN SHARE):\n${lastLink}\n\n📦 Isi Terminal:\n• License Key: ${key}\n• MT5: ${mt5}\n• Berlaku sampai: ${expiryDateStr}\n• Download EA V8 (.ex5) + Set File + Panduan Bilingual\n• Grup Telegram Private\n\n📖 Cara Pasang (2 Menit): Buka link di atas → Download EA → Pasang di MT5 → Load Set File\n\nButuh bantuan? Balas WA ini ya.\n\n- Antonius | HGTV8`;
 
   const out=document.getElementById('out');
   out.style.display='block';
-  out.innerHTML = `<b>PRIVATE LINK GENERATED:</b><br><br><a href="${lastLink}" target="_blank">${lastLink}</a><br><br><b>Email:</b> ${email}<br><b>MT5:</b> ${mt5}<br><b>Key:</b> ${key}<br><b>Exp:</b> ${exp} hari<br><br><span style="color:#666">Copy link ini & tempel di Lynk.id atau kirim langsung ke WA buyer.</span>`;
+  out.innerHTML = `<b>PRIVATE LINK GENERATED:</b><br><br><a href="${lastLink}" target="_blank">${lastLink}</a><br><br><b>Email:</b> ${email}<br><b>MT5:</b> ${mt5}<br><b>Key:</b> ${key}<br><b>Berlaku sampai:</b> ${expiryDateStr}<br><br><span style="color:#666">Copy link ini & tempel di Lynk.id atau kirim langsung ke WA buyer.</span>`;
   document.getElementById('acts').style.display='flex';
   if(withWA){ copyWA(); }
 }
@@ -127,15 +129,18 @@ function copyLink(){
   navigator.clipboard.writeText(lastLink);
   alert('✅ Link private tercopy! Paste di Lynk.id atau WA buyer.');
 }
+
 function copyWA(){
   if(!lastWA)return;
   navigator.clipboard.writeText(lastWA);
   alert('✅ Template WA tercopy! Paste di WhatsApp buyer.');
 }
+
 function openLink(){
   if(!lastLink)return;
   window.open(lastLink,'_blank');
 }
+
 document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
 </script>
 </body>
