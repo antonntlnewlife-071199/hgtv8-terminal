@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>HGTV8 ADMIN GENERATOR - PRIVATE</title>
+<style>
+:root{--gold:#D4AF37;--bg:#0a0a0a;--card:#141414;--text:#fff;--muted:#9a9a9a}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial}
+body{margin:0;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{max-width:640px;width:100%;background:var(--card);border:1px solid #222;border-radius:18px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.h{font-size:22px;font-weight:800;letter-spacing:1px;margin:0 0 6px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+label{font-size:12px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;display:block;margin:14px 0 6px}
+input{width:100%;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:10px;padding:13px 14px;color:#fff;font-size:14px;outline:none}
+input:focus{border-color:var(--gold)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{width:100%;margin-top:16px;background:linear-gradient(180deg,#E7C766,#D4AF37);color:#000;font-weight:800;border:0;border-radius:12px;padding:14px;font-size:14px;letter-spacing:.5px;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn2{background:#1e1e1e;color:#fff;border:1px solid #333;margin-top:10px}
+.keybox{background:#000;border:1px dashed #333;border-radius:12px;padding:14px;margin-top:18px;word-break:break-all;font-family:monospace;font-size:13px;display:none}
+.keybox b{color:var(--gold)}
+.actions{display:none;gap:10px;margin-top:14px}
+.actions button{flex:1}
+.lock{max-width:420px;width:100%;background:var(--card);border:1px solid #222;border-radius:16px;padding:28px;text-align:center}
+.small{font-size:11px;color:#666;margin-top:12px;line-height:1.4}
+.tag{display:inline-block;background:#111;border:1px solid #222;border-radius:999px;padding:4px 10px;font-size:11px;color:var(--muted);margin-bottom:12px}
+a{color:var(--gold);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div id="lock" class="lock">
+  <div class="tag">HGTV8 PRIVATE ADMIN</div>
+  <h2 style="margin:0 0 8px">Masuk Admin</h2>
+  <p class="sub">Halaman ini tidak untuk buyer. Masukkan password admin.</p>
+  <input id="pass" type="password" placeholder="Password admin HGTV8">
+  <button class="btn" onclick="unlock()">BUKA GENERATOR</button>
+  <p class="small">Default password: <b>hermesv8admin</b> — ganti di file admin.html baris 78</p>
+</div>
+
+<div id="app" class="card" style="display:none">
+  <div class="tag">PREMIUM LICENSE GENERATOR</div>
+  <div class="h">HERMES GOLD TERMINAL V8</div>
+  <div class="sub">Generate private terminal link untuk buyer. Link auto noindex (tidak ke-index Google).</div>
+
+  <label>Email Buyer</label>
+  <input id="email" type="email" placeholder="widya00451477@gmail.com" value="widya00451477@gmail.com">
+
+  <div class="row">
+    <div>
+      <label>MT5 Account</label>
+      <input id="mt5" type="text" placeholder="10905323" value="10905323">
+    </div>
+    <div>
+      <label>Expiry (hari)</label>
+      <input id="exp" type="number" placeholder="365" value="365">
+    </div>
+  </div>
+
+  <label>License Key (auto)</label>
+  <div class="row">
+    <div><input id="key" type="text" readonly placeholder="Klik Generate"></div>
+    <div><button class="btn" style="margin-top:0" onclick="genKey()">🎲 GENERATE KEY</button></div>
+  </div>
+
+  <button class="btn" onclick="generate()">✨ GENERATE PRIVATE LINK</button>
+  <button class="btn btn2" onclick="generate(true)">🔄 GENERATE + COPY WA TEMPLATE</button>
+
+  <div id="out" class="keybox"></div>
+
+  <div id="acts" class="actions">
+    <button class="btn btn2" onclick="copyLink()">📋 Copy Link</button>
+    <button class="btn btn2" onclick="copyWA()">💬 Copy WA Template</button>
+    <button class="btn btn2" onclick="openLink()">🚀 Buka Link</button>
+  </div>
+
+  <p class="small">Base URL: <span id="baseUrl" style="color:#aaa"></span><br>
+  File ini simpan di repo hgtv8-terminal sebagai <b>admin.html</b>. Jangan share link admin.html ke buyer. Buyer hanya dapat link dengan <code>?email=&key=&mt5=</code><br><br>
+  Next: #2 License Lock + #3 Lynk.id Sales Page</p>
+</div>
+
+<script>
+const ADMIN_PASS = "hermesv8admin"; // GANTI PASSWORD DISINI
+const BASE = "https://antonntlnewlife-071199.github.io/hgtv8-terminal/";
+let lastLink = "";
+let lastWA = "";
+
+document.getElementById('baseUrl').textContent = BASE;
+
+function unlock(){
+  if(document.getElementById('pass').value===ADMIN_PASS){
+    document.getElementById('lock').style.display='none';
+    document.getElementById('app').style.display='block';
+    genKey();
+  } else { alert('Password salah! Default: hermesv8admin'); }
+}
+
+function genKey(){
+  const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const part = (len)=>{let s="";for(let i=0;i<len;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s;};
+  const key = `HERMES-V8-${part(4)}-${part(4)}-${part(4)}`;
+  document.getElementById('key').value=key;
+  return key;
+}
+
+function generate(withWA=false){
+  const email=document.getElementById('email').value.trim();
+  const mt5=document.getElementById('mt5').value.trim();
+  const key=document.getElementById('key').value.trim()||genKey();
+  const exp=document.getElementById('exp').value.trim()||"365";
+  if(!email||!mt5){alert('Isi email & MT5 dulu!');return;}
+  const params = new URLSearchParams({email, key, mt5, exp});
+  lastLink = BASE + "?" + params.toString();
+  lastWA = `Halo! 🎉\n\nTerima kasih sudah order *HERMES GOLD TERMINAL V8*!\n\n🔑 PRIVATE TERMINAL ANDA (JANGAN SHARE):\n${lastLink}\n\n📦 Isi Terminal:\n• License Key: ${key}\n• MT5: ${mt5}\n• Expiry: ${exp} hari\n• Download EA V8 (.ex5) + Set File + Panduan Bilingual\n• Grup Telegram Private\n\n📖 Cara Pasang (2 Menit): Buka link di atas → Download EA → Pasang di MT5 → Load Set File\n\nButuh bantuan? Balas WA ini ya.\n\n- Antonius | HGTV8`;
+
+  const out=document.getElementById('out');
+  out.style.display='block';
+  out.innerHTML = `<b>PRIVATE LINK GENERATED:</b><br><br><a href="${lastLink}" target="_blank">${lastLink}</a><br><br><b>Email:</b> ${email}<br><b>MT5:</b> ${mt5}<br><b>Key:</b> ${key}<br><b>Exp:</b> ${exp} hari<br><br><span style="color:#666">Copy link ini & tempel di Lynk.id atau kirim langsung ke WA buyer.</span>`;
+  document.getElementById('acts').style.display='flex';
+  if(withWA){ copyWA(); }
+}
+
+function copyLink(){
+  if(!lastLink)return;
+  navigator.clipboard.writeText(lastLink);
+  alert('✅ Link private tercopy! Paste di Lynk.id atau WA buyer.');
+}
+function copyWA(){
+  if(!lastWA)return;
+  navigator.clipboard.writeText(lastWA);
+  alert('✅ Template WA tercopy! Paste di WhatsApp buyer.');
+}
+function openLink(){
+  if(!lastLink)return;
+  window.open(lastLink,'_blank');
+}
+document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
+</script>
+</body>
+</html>
