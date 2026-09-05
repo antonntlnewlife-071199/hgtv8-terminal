@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HERMES GOLD V8.3 - Premium Gold EA MT5</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,system-ui;background:#0a0a0a;color:#fff;line-height:1.6}
+.lang-toggle{position:fixed;top:20px;right:20px;z-index:999;background:#1a1a1a;border:1px solid #333;border-radius:30px;padding:6px;display:flex;gap:6px}
+.lang-btn{padding:8px 18px;border-radius:20px;border:none;cursor:pointer;font-weight:700;transition:0.3s}
+.lang-btn.active{background:#FFD700;color:#000}
+.hero{padding:80px 20px;text-align:center;background:radial-gradient(circle at center,#1a1a0a 0%,#0a0a0a 70%)}
+.hero h1{font-size:3rem;background:linear-gradient(90deg,#FFD700,#FFA500);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.badge{display:inline-block;background:#FFD700;color:#000;padding:6px 16px;border-radius:20px;font-weight:800;margin:20px 0}
+.card{background:#151515;border:1px solid #222;border-radius:16px;padding:24px;margin:20px auto;max-width:900px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.btn{display:inline-block;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;padding:16px 36px;border-radius:30px;font-weight:900;text-decoration:none;margin:10px}
+.btn-outline{border:1px solid #FFD700;background:transparent;color:#FFD700}
+[data-lang]{display:none}[data-lang].show{display:block}
+</style>
+</head>
+<body>
+<div class="lang-toggle">
+<button class="lang-btn active" onclick="setLang('id')">🇮🇩 ID</button>
+<button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+</div>
+
+<div class="hero">
+<h1>HERMES GOLD V8.3</h1>
+<div class="badge">BILINGUAL PREMIUM • ANTI-SHARE LOCKED</div>
+
+<div data-lang="id" class="show">
+<h2>EA Gold M15 Auto Profit +10pt / SL -20pt</h2>
+<p style="max-width:700px;margin:20px auto;opacity:0.8">Sistem bridge otomatis baca signal JSON, eksekusi instant di MT5, TP/SL otomatis, sudah terkunci MT5 Anti-Share. Tidak bisa dibajak!</p>
+</div>
+<div data-lang="en" class="">
+<h2>Gold M15 Auto Profit EA +10pt TP / -20pt SL</h2>
+<p style="max-width:700px;margin:20px auto;opacity:0.8">Auto bridge system reads JSON signals, instant MT5 execution, auto TP/SL, MT5-locked Anti-Share. 100% piracy-proof!</p>
+</div>
+
+<a href="#buy" class="btn"><span data-lang="id" class="show">BELI SEKARANG - Rp 1.5 JT</span><span data-lang="en">BUY NOW - $99</span></a>
+</div>
+
+<div class="card">
+<div class="grid">
+<div>
+<div data-lang="id" class="show"><h3>🔒 Fitur Premium</h3><ul style="margin-top:12px;opacity:0.9"><li>✅ Kunci MT5 Anti-Share (1 license = 1 MT5)</li><li>✅ Auto TP +10 poin / SL -20 poin Gold</li><li>✅ Bridge JSON → MT5 instant</li><li>✅ Bilingual ID/EN - Panel buyer 2 bahasa</li><li>✅ License Server Google Sheet milik Anda</li><li>✅ 365 hari aktif, bisa perpanjang</li></ul></div>
+<div data-lang="en"><h3>🔒 Premium Features</h3><ul style="margin-top:12px;opacity:0.9"><li>✅ MT5-locked Anti-Share (1 license = 1 MT5)</li><li>✅ Auto TP +10 pts / SL -20 pts Gold</li><li>✅ JSON Bridge → instant MT5</li><li>✅ Bilingual ID/EN - Buyer panel 2 languages</li><li>✅ Your own Google Sheet License Server</li><li>✅ 365 days active, renewable</li></ul></div>
+</div>
+<div>
+<div data-lang="id" class="show"><h3>📦 Yang Buyer Dapat</h3><ul style="margin-top:12px;opacity:0.9"><li>• File EA: HermesGoldBridge_V8_3_BILINGUAL.ex5</li><li>• License Key unik: HERMES-V8-XXXX</li><li>• Panduan PDF 2 bahasa</li><li>• Grup support Telegram</li><li>• Pilihan bahasa di input EA</li></ul></div>
+<div data-lang="en"><h3>📦 What Buyer Gets</h3><ul style="margin-top:12px;opacity:0.9"><li>• EA file: HermesGoldBridge_V8_3_BILINGUAL.ex5</li><li>• Unique License Key: HERMES-V8-XXXX</li><li>• Bilingual PDF guide</li><li>• Telegram support group</li><li>• Language selector in EA inputs</li></ul></div>
+</div>
+</div>
+</div>
+
+<div class="card" id="buy" style="text-align:center">
+<div data-lang="id" class="show"><h2>Cara Beli & Aktivasi</h2><p style="margin:12px 0">1. Bayar via Lynk.id → 2. Kirim MT5 ID Anda → 3. Terima License Key → 4. Pasang EA → 5. Profit!</p><a href="https://lynk.id/antonntlnewlife" class="btn">BAYAR VIA LYNK.ID</a><br><a href="#" class="btn btn-outline">WhatsApp Antonius</a></div>
+<div data-lang="en"><h2>How to Buy & Activate</h2><p style="margin:12px 0">1. Pay via Lynk.id → 2. Send your MT5 ID → 3. Receive License Key → 4. Install EA → 5. Profit!</p><a href="https://lynk.id/antonntlnewlife" class="btn">PAY VIA LYNK.ID</a><br><a href="#" class="btn btn-outline">WhatsApp Antonius</a></div>
+</div>
+
+<script>
+function setLang(l){
+ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+ event.target.classList.add('active');
+ document.querySelectorAll('[data-lang]').forEach(el=>{
+   el.classList.remove('show');
+   if(el.getAttribute('data-lang')===l) el.classList.add('show');
+ });
+ localStorage.setItem('hgt_lang',l);
+}
+const saved = localStorage.getItem('hgt_lang');
+if(saved) { document.querySelectorAll('[data-lang]').forEach(el=>{ el.classList.toggle('show', el.getAttribute('data-lang')===saved); }); document.querySelectorAll('.lang-btn').forEach(b=>{ b.classList.toggle('active', b.textContent.toLowerCase().includes(saved)); }); }
+</script>
+</body>
+</html>
