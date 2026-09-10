@@ -211,6 +211,83 @@ button:disabled {
   display: block;
   margin-bottom: 5px;
 }
+.preview-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  display: none;
+}
+.preview-section.show {
+  display: block;
+}
+.preview-content {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  line-height: 1.8;
+  font-size: 1.05em;
+}
+.preview-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+.btn-small {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95em;
+}
+.btn-play {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: 2px solid #fff;
+}
+.btn-play:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.btn-pause {
+  background: rgba(255, 193, 7, 0.8);
+  color: #000;
+  border: 2px solid rgba(255, 193, 7, 1);
+}
+.btn-pause:hover:not(:disabled) {
+  background: #FFC107;
+}
+.btn-stop {
+  background: rgba(244, 67, 54, 0.8);
+  color: #fff;
+  border: 2px solid rgba(244, 67, 54, 1);
+}
+.btn-stop:hover:not(:disabled) {
+  background: #f44336;
+}
+.word-count {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-top: 10px;
+}
+.preview-info {
+  background: rgba(76, 175, 80, 0.2);
+  border-left: 4px solid #4CAF50;
+  padding: 12px;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-size: 0.95em;
+}
+.avatar-preview {
+  text-align: center;
+  margin: 15px 0;
+  font-size: 4em;
+}
 </style>
 </head>
 <body>
@@ -327,14 +404,58 @@ button:disabled {
 
     <!-- Buttons -->
     <div class="button-group">
+      <button type="button" class="btn-generate" id="previewBtn" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);">
+        👁️ Preview Script
+      </button>
       <button type="submit" class="btn-generate" id="generateBtn">
         🚀 Generate Video
       </button>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
       <button type="reset" class="btn-reset" id="resetBtn">
         ↻ Clear Form
       </button>
+      <button type="button" class="btn-reset" id="closePreviewBtn" style="display: none;">
+        ✕ Close Preview
+      </button>
     </div>
   </form>
+
+  <!-- Preview Section -->
+  <div class="preview-section" id="previewSection">
+    <h3>👁️ Script Preview</h3>
+    
+    <div class="avatar-preview" id="avatarEmoji">👩</div>
+    
+    <div class="preview-content" id="previewText"></div>
+    
+    <div class="word-count">
+      <strong>Word Count:</strong> <span id="wordCount">0</span> words | 
+      <strong>Estimated Duration:</strong> <span id="estimatedDuration">0</span>s
+    </div>
+    
+    <div class="preview-info">
+      <strong>ℹ️ Tip:</strong> Durasi estimasi berdasarkan kecepatan bicara 150 kata/menit. Klik tombol di bawah untuk mendengarkan preview.
+    </div>
+    
+    <div class="preview-controls">
+      <button type="button" class="btn-small btn-play" id="playPreviewBtn">
+        ▶️ Play (Text-to-Speech)
+      </button>
+      <button type="button" class="btn-small btn-pause" id="pausePreviewBtn" style="display: none;">
+        ⏸️ Pause
+      </button>
+      <button type="button" class="btn-small btn-stop" id="stopPreviewBtn" style="display: none;">
+        ⏹️ Stop
+      </button>
+      <select id="previewSpeed" class="btn-small" style="background: rgba(255, 255, 255, 0.2); color: #fff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 10px;">
+        <option value="0.8">🐢 Slow (0.8x)</option>
+        <option value="1.0" selected>Normal (1.0x)</option>
+        <option value="1.2">🐇 Fast (1.2x)</option>
+      </select>
+    </div>
+  </div>
 
   <!-- Status Messages -->
   <div class="status-box" id="statusBox"></div>
@@ -350,11 +471,191 @@ button:disabled {
 <script>
 const form = document.getElementById('videoForm');
 const generateBtn = document.getElementById('generateBtn');
+const previewBtn = document.getElementById('previewBtn');
 const resetBtn = document.getElementById('resetBtn');
+const closePreviewBtn = document.getElementById('closePreviewBtn');
 const statusBox = document.getElementById('statusBox');
 const videoOutput = document.getElementById('videoOutput');
 const videoPlayer = document.getElementById('videoPlayer');
 const videoMessage = document.getElementById('videoMessage');
+const previewSection = document.getElementById('previewSection');
+const previewText = document.getElementById('previewText');
+const wordCountSpan = document.getElementById('wordCount');
+const estimatedDurationSpan = document.getElementById('estimatedDuration');
+const playPreviewBtn = document.getElementById('playPreviewBtn');
+const pausePreviewBtn = document.getElementById('pausePreviewBtn');
+const stopPreviewBtn = document.getElementById('stopPreviewBtn');
+const previewSpeed = document.getElementById('previewSpeed');
+const avatarEmoji = document.getElementById('avatarEmoji');
+
+let speechSynthesis = window.speechSynthesis;
+let currentUtterance = null;
+let isPreviewPlaying = false;
+
+// Avatar emojis mapping
+const avatarEmojis = {
+  'emma_en': '👩‍🦰',
+  'james_en': '👨‍💼',
+  'sophia_en': '👩‍💻'
+};
+
+function getAvatarEmoji(avatarId) {
+  return avatarEmojis[avatarId] || '👩';
+}
+
+function countWords(text) {
+  return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+}
+
+function calculateDuration(wordCount) {
+  // Average speech rate: 150 words per minute
+  return Math.ceil((wordCount / 150) * 60);
+}
+
+function updateWordCount() {
+  const script = document.getElementById('script').value.trim();
+  const words = countWords(script);
+  const duration = calculateDuration(words);
+  
+  wordCountSpan.textContent = words;
+  estimatedDurationSpan.textContent = duration;
+}
+
+function getLanguageCode(language) {
+  const langMap = {
+    'en-US': 'en-US',
+    'en-GB': 'en-GB',
+    'id-ID': 'id-ID',
+    'es-ES': 'es-ES',
+    'fr-FR': 'fr-FR',
+    'de-DE': 'de-DE',
+    'ja-JP': 'ja-JP',
+    'zh-CN': 'zh-CN'
+  };
+  return langMap[language] || 'en-US';
+}
+
+// Preview button
+previewBtn.addEventListener('click', () => {
+  const script = document.getElementById('script').value.trim();
+  const avatar = document.querySelector('input[name="avatar"]:checked').value;
+  
+  if (script.length < 10) {
+    showStatus('❌ Script minimal 10 karakter untuk preview', 'error');
+    return;
+  }
+  
+  previewText.textContent = script;
+  avatarEmoji.textContent = getAvatarEmoji(avatar);
+  previewSection.classList.add('show');
+  closePreviewBtn.style.display = 'block';
+  updateWordCount();
+  
+  // Scroll to preview
+  previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+// Close preview
+closePreviewBtn.addEventListener('click', () => {
+  stopPreview();
+  previewSection.classList.remove('show');
+  closePreviewBtn.style.display = 'none';
+});
+
+// Play preview
+playPreviewBtn.addEventListener('click', () => {
+  if (isPreviewPlaying) return;
+  
+  const script = document.getElementById('script').value.trim();
+  const language = document.getElementById('language').value;
+  const speed = parseFloat(previewSpeed.value);
+  
+  // Cancel any existing speech
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+  }
+  
+  currentUtterance = new SpeechSynthesisUtterance(script);
+  currentUtterance.lang = getLanguageCode(language);
+  currentUtterance.rate = speed;
+  currentUtterance.pitch = 1;
+  currentUtterance.volume = 1;
+  
+  currentUtterance.onstart = () => {
+    isPreviewPlaying = true;
+    playPreviewBtn.style.display = 'none';
+    pausePreviewBtn.style.display = 'block';
+    stopPreviewBtn.style.display = 'block';
+  };
+  
+  currentUtterance.onend = () => {
+    resetPreviewButtons();
+  };
+  
+  currentUtterance.onerror = (event) => {
+    console.error('Speech error:', event.error);
+    showStatus(`❌ Text-to-Speech Error: ${event.error}`, 'error');
+    resetPreviewButtons();
+  };
+  
+  speechSynthesis.speak(currentUtterance);
+});
+
+// Pause preview
+pausePreviewBtn.addEventListener('click', () => {
+  if (speechSynthesis.paused) {
+    speechSynthesis.resume();
+    pausePreviewBtn.textContent = '⏸️ Pause';
+  } else {
+    speechSynthesis.pause();
+    pausePreviewBtn.textContent = '▶️ Resume';
+  }
+});
+
+// Stop preview
+stopPreviewBtn.addEventListener('click', () => {
+  stopPreview();
+});
+
+function stopPreview() {
+  if (speechSynthesis.speaking || speechSynthesis.paused) {
+    speechSynthesis.cancel();
+  }
+  resetPreviewButtons();
+}
+
+function resetPreviewButtons() {
+  isPreviewPlaying = false;
+  playPreviewBtn.style.display = 'block';
+  pausePreviewBtn.style.display = 'none';
+  stopPreviewBtn.style.display = 'none';
+  pausePreviewBtn.textContent = '⏸️ Pause';
+}
+
+// Update preview when script changes
+document.getElementById('script').addEventListener('input', () => {
+  if (previewSection.classList.contains('show')) {
+    updateWordCount();
+    previewText.textContent = document.getElementById('script').value.trim();
+  }
+});
+
+// Update avatar preview
+document.querySelectorAll('input[name="avatar"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    if (previewSection.classList.contains('show')) {
+      const avatar = radio.value;
+      avatarEmoji.textContent = getAvatarEmoji(avatar);
+    }
+  });
+});
+
+// Change preview speed
+previewSpeed.addEventListener('change', () => {
+  if (speechSynthesis.speaking) {
+    stopPreview();
+  }
+});
 
 function showStatus(message, type = 'info') {
   statusBox.textContent = '';
@@ -403,6 +704,7 @@ form.addEventListener('submit', async (e) => {
   }
   
   hideVideoOutput();
+  stopPreview();
   showStatus('🔄 Mengirim request ke Synthesia... Proses dimulai...', 'loading');
   generateBtn.disabled = true;
   
@@ -466,6 +768,9 @@ form.addEventListener('submit', async (e) => {
 resetBtn.addEventListener('click', () => {
   hideStatus();
   hideVideoOutput();
+  stopPreview();
+  previewSection.classList.remove('show');
+  closePreviewBtn.style.display = 'none';
   form.reset();
 });
 
@@ -481,6 +786,13 @@ window.addEventListener('load', () => {
   const savedKey = sessionStorage.getItem('synthesia_api_key');
   if (savedKey) {
     document.getElementById('apiKey').value = savedKey;
+  }
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
   }
 });
 </script>
