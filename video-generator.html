@@ -288,6 +288,168 @@ button:disabled {
   margin: 15px 0;
   font-size: 4em;
 }
+.templates-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  overflow-y: auto;
+}
+.templates-modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.templates-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+.templates-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  color: #fff;
+  font-size: 1.5em;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.templates-close:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+.templates-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.templates-header h2 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+.templates-search {
+  margin-bottom: 20px;
+}
+.templates-search input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 1em;
+}
+.templates-search input:focus {
+  outline: none;
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+}
+.templates-search input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+.templates-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 25px;
+}
+.category-btn {
+  padding: 10px 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+.category-btn:hover,
+.category-btn.active {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: #fff;
+}
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.template-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+.template-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-5px);
+}
+.template-icon {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+.template-title {
+  font-weight: 700;
+  font-size: 1.1em;
+  margin-bottom: 8px;
+}
+.template-desc {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-bottom: 15px;
+  flex-grow: 1;
+}
+.template-preview {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85em;
+  max-height: 100px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
+}
+.template-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+  color: #000;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.template-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+.templates-empty {
+  text-align: center;
+  padding: 40px;
+  opacity: 0.8;
+}
 </style>
 </head>
 <body>
@@ -300,6 +462,8 @@ button:disabled {
   <div class="info-box">
     <strong>ℹ️ Info:</strong>
     Fitur ini menggunakan API Synthesia untuk membuat video dengan AI avatar presenter. Pastikan Anda sudah memiliki API key Synthesia yang valid.
+    <br><br>
+    💡 <strong>Tip:</strong> Gunakan <button type="button" id="templatesToggleBtn" style="background: none; border: none; color: #4CAF50; cursor: pointer; text-decoration: underline; font-weight: bold; padding: 0; font: inherit;">Script Templates</button> untuk memulai dengan cepat!
   </div>
 
   <form id="videoForm">
@@ -465,6 +629,30 @@ button:disabled {
     <h3>✅ Video Siap!</h3>
     <p id="videoMessage"></p>
     <video id="videoPlayer" controls></video>
+  </div>
+</div>
+
+<!-- Templates Modal -->
+<div class="templates-modal" id="templatesModal">
+  <div class="templates-content">
+    <button class="templates-close" id="templatesCloseBtn">✕</button>
+    
+    <div class="templates-header">
+      <h2>📚 Script Templates Library</h2>
+      <p>Pilih template dan kustomisasi sesuai kebutuhan Anda</p>
+    </div>
+    
+    <div class="templates-search">
+      <input type="text" id="templatesSearchInput" placeholder="🔍 Cari template...">
+    </div>
+    
+    <div class="templates-categories" id="templateCategories"></div>
+    
+    <div class="templates-grid" id="templatesGrid"></div>
+    
+    <div class="templates-empty" id="templatesEmpty" style="display: none;">
+      <p>Tidak ada template yang sesuai dengan pencarian Anda</p>
+    </div>
   </div>
 </div>
 
@@ -793,6 +981,229 @@ window.addEventListener('load', () => {
 window.addEventListener('beforeunload', () => {
   if (speechSynthesis.speaking) {
     speechSynthesis.cancel();
+  }
+});
+
+// Script Templates Library
+const scriptTemplates = [
+  {
+    id: 1,
+    category: 'Marketing',
+    icon: '📢',
+    title: 'Product Launch',
+    description: 'Announce a new product to customers',
+    preview: 'Introducing our latest innovation...',
+    script: 'Halo semuanya! Kami dengan senang hati memperkenalkan produk terbaru kami yang revolusioner. Produk ini dirancang khusus untuk memenuhi kebutuhan Anda dan memberikan solusi terbaik. Dengan fitur-fitur canggih dan harga terjangkau, kami yakin ini akan mengubah cara Anda bekerja. Tersedia mulai hari ini, jangan lewatkan kesempatan emas ini!'
+  },
+  {
+    id: 2,
+    category: 'Marketing',
+    icon: '💰',
+    title: 'Special Offer',
+    description: 'Promote a limited-time discount',
+    preview: 'For a limited time only...',
+    script: 'Dapatkan penawaran spesial kami yang terbatas! Diskon hingga 50% untuk semua produk pilihan. Penawaran ini hanya berlaku selama persediaan masih ada dan waktu terbatas. Jangan sia-siakan kesempatan ini untuk mendapatkan produk berkualitas dengan harga terbaik. Pesan sekarang dan nikmati pengalaman berbelanja yang tak terlupakan!'
+  },
+  {
+    id: 3,
+    category: 'Education',
+    icon: '📚',
+    title: 'Course Introduction',
+    description: 'Introduce an online course',
+    preview: 'Welcome to our comprehensive course...',
+    script: 'Selamat datang di kursus online kami yang komprehensif! Dalam kursus ini, kami akan mengajarkan Anda konsep-konsep fundamental dan praktik terbaik industri. Anda akan belajar dari para ahli berpengalaman dengan metode pembelajaran interaktif. Materi kursus mencakup video tutorial, kuis interaktif, dan proyek praktis. Daftar sekarang dan mulai perjalanan pembelajaran Anda hari ini!'
+  },
+  {
+    id: 4,
+    category: 'Education',
+    icon: '🎓',
+    title: 'Tutorial',
+    description: 'Step-by-step tutorial guide',
+    preview: 'In this tutorial, we will show you...',
+    script: 'Dalam tutorial ini, saya akan menunjukkan cara melakukan sesuatu dengan langkah-langkah yang mudah. Pertama, kita mulai dengan memahami dasar-dasarnya. Kemudian, kita akan bergerak ke bagian yang lebih kompleks. Ikuti setiap langkah dengan hati-hati dan pastikan Anda memahami sebelum melanjutkan. Di akhir tutorial, Anda akan mahir dan siap menerapkan apa yang telah dipelajari.'
+  },
+  {
+    id: 5,
+    category: 'Announcement',
+    icon: '📣',
+    title: 'Event Announcement',
+    description: 'Announce an upcoming event',
+    preview: 'Join us for an exciting event...',
+    script: 'Kami dengan bangga mengumumkan acara besar yang akan diadakan minggu depan! Ini adalah kesempatan langka untuk bertemu dengan para pemimpin industri dan belajar dari pengalaman mereka. Acara ini akan menampilkan pembicara terkemuka, workshop interaktif, dan networking opportunities. Daftarkan diri Anda sekarang karena tempat terbatas. Kami harap dapat menemui Anda di acara ini!'
+  },
+  {
+    id: 6,
+    category: 'Announcement',
+    icon: '🔔',
+    title: 'Important Update',
+    description: 'Share important news or updates',
+    preview: 'We have an important announcement...',
+    script: 'Kami perlu berbagi informasi penting dengan semua Anda. Berdasarkan feedback pelanggan dan perkembangan industri terkini, kami telah membuat beberapa perubahan signifikan. Perubahan ini dirancang untuk meningkatkan kualitas layanan kami dan memberikan pengalaman yang lebih baik. Kami percaya ini adalah langkah maju yang benar. Terima kasih atas dukungan berkelanjutan Anda!'
+  },
+  {
+    id: 7,
+    category: 'Presentation',
+    icon: '🎤',
+    title: 'Business Pitch',
+    description: 'Pitch your business idea',
+    preview: 'Imagine a world where...',
+    script: 'Bayangkan dunia di mana masalah ini tidak lagi terjadi. Itulah visi kami. Kami telah mengembangkan solusi inovatif yang mengatasi tantangan ini dengan cara yang belum pernah ada sebelumnya. Tim kami terdiri dari para ahli berpengalaman yang berdedikasi untuk kesuksesan Anda. Kami mencari mitra untuk bergabung dalam misi kami mengubah industri. Mari kita wujudkan visi ini bersama-sama!'
+  },
+  {
+    id: 8,
+    category: 'Presentation',
+    icon: '📊',
+    title: 'Quarterly Report',
+    description: 'Present quarterly business results',
+    preview: 'Thank you for joining our quarterly meeting...',
+    script: 'Terima kasih telah bergabung dengan pertemuan kuartalan kami. Saya senang melaporkan bahwa kami telah mencapai pertumbuhan yang solid tahun ini. Pendapatan meningkat 30 persen, sementara kepuasan pelanggan mencapai rekor tertinggi. Kami juga telah memperluas tim dan meluncurkan dua produk baru yang sukses. Melihat ke depan, kami optimis tentang peluang di masa depan dan berkomitmen untuk pertumbuhan berkelanjutan.'
+  },
+  {
+    id: 9,
+    category: 'Testimonial',
+    icon: '⭐',
+    title: 'Customer Success Story',
+    description: 'Share a customer success story',
+    preview: 'Saya awalnya skeptis, tetapi...',
+    script: 'Saya awalnya skeptis, tetapi setelah mencoba produk ini, saya benar-benar terkejut dengan hasilnya. Kualitasnya luar biasa dan dukungan pelanggan sangat responsif. Dalam waktu singkat, saya melihat peningkatan signifikan dalam produktivitas saya. Saya merekomendasikan produk ini kepada semua rekan bisnis saya. Investasi terbaik yang pernah saya buat untuk bisnis saya!'
+  },
+  {
+    id: 10,
+    category: 'Testimonial',
+    icon: '👍',
+    title: 'User Review',
+    description: 'Positive user experience review',
+    preview: 'This product changed my life...',
+    script: 'Produk ini benar-benar mengubah hidup saya. Sebelumnya saya menghabiskan berjam-jam untuk pekerjaan manual yang membosankan. Sekarang, semuanya otomatis dan saya bisa fokus pada hal-hal yang lebih penting. Antarmukanya sangat intuitif dan mudah digunakan. Bahkan untuk orang yang tidak tech-savvy sekalipun. Saya tidak bisa membayangkan kembali bekerja tanpa sistem ini!'
+  },
+  {
+    id: 11,
+    category: 'Sales',
+    icon: '💼',
+    title: 'Sales Pitch',
+    description: 'Persuasive sales message',
+    preview: 'Are you struggling with...',
+    script: 'Apakah Anda berjuang dengan masalah ini setiap hari? Kami mengerti frustrasinya. Itulah mengapa kami mengembangkan solusi yang dirancang khusus untuk mengatasi tantangan ini. Dengan menggunakan teknologi terdepan dan pendekatan inovatif, kami menjamin hasil yang terukur. Ribuan perusahaan telah mempercayai kami dan melihat ROI yang signifikan. Saatnya Anda bergabung dengan mereka. Hubungi kami untuk demo gratis hari ini!'
+  },
+  {
+    id: 12,
+    category: 'Sales',
+    icon: '🎁',
+    title: 'Bundle Offer',
+    description: 'Present a package deal',
+    preview: 'Get more value with our bundle...',
+    script: 'Dapatkan lebih banyak nilai dengan paket bundel kami yang eksklusif! Kami telah menggabungkan produk-produk terpopuler kami dengan harga spesial yang tidak akan Anda temukan di tempat lain. Paket ini dirancang untuk memberikan solusi lengkap untuk semua kebutuhan Anda. Hemat hingga 40 persen dibandingkan membeli secara terpisah. Penawaran ini terbatas dan tidak akan berlangsung lama. Pesan sekarang sebelum terlambat!'
+  }
+];
+
+const templatesModal = document.getElementById('templatesModal');
+const templatesCloseBtn = document.getElementById('templatesCloseBtn');
+const templatesToggleBtn = document.getElementById('templatesToggleBtn');
+const templatesGrid = document.getElementById('templatesGrid');
+const templateCategories = document.getElementById('templateCategories');
+const templatesSearchInput = document.getElementById('templatesSearchInput');
+const templatesEmpty = document.getElementById('templatesEmpty');
+
+let currentCategory = 'all';
+
+function getCategories() {
+  return ['all', ...new Set(scriptTemplates.map(t => t.category))];
+}
+
+function renderCategories() {
+  const categories = getCategories();
+  templateCategories.innerHTML = categories.map(cat => 
+    `<button class="category-btn ${cat === 'all' ? 'active' : ''}" data-category="${cat}">
+      ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+    </button>`
+  ).join('');
+  
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.category;
+      renderTemplates();
+    });
+  });
+}
+
+function renderTemplates(searchQuery = '') {
+  let filtered = scriptTemplates;
+  
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(t => t.category === currentCategory);
+  }
+  
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter(t => 
+      t.title.toLowerCase().includes(query) ||
+      t.description.toLowerCase().includes(query) ||
+      t.script.toLowerCase().includes(query)
+    );
+  }
+  
+  if (filtered.length === 0) {
+    templatesGrid.style.display = 'none';
+    templatesEmpty.style.display = 'block';
+    return;
+  }
+  
+  templatesGrid.style.display = 'grid';
+  templatesEmpty.style.display = 'none';
+  
+  templatesGrid.innerHTML = filtered.map(template => `
+    <div class="template-card">
+      <div class="template-icon">${template.icon}</div>
+      <div class="template-title">${template.title}</div>
+      <div class="template-desc">${template.description}</div>
+      <div class="template-preview">${template.script.substring(0, 100)}...</div>
+      <button class="template-btn" data-id="${template.id}">
+        📋 Use Template
+      </button>
+    </div>
+  `).join('');
+  
+  document.querySelectorAll('.template-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const templateId = btn.dataset.id;
+      const template = scriptTemplates.find(t => t.id == templateId);
+      document.getElementById('script').value = template.script;
+      updateWordCount();
+      templatesModal.classList.remove('show');
+      showStatus('✅ Template loaded! Customize the script as needed.', 'success');
+      document.getElementById('script').focus();
+      document.getElementById('script').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
+
+// Templates modal controls
+templatesToggleBtn.addEventListener('click', () => {
+  templatesModal.classList.add('show');
+  renderCategories();
+  renderTemplates();
+});
+
+templatesCloseBtn.addEventListener('click', () => {
+  templatesModal.classList.remove('show');
+});
+
+templatesModal.addEventListener('click', (e) => {
+  if (e.target === templatesModal) {
+    templatesModal.classList.remove('show');
+  }
+});
+
+templatesSearchInput.addEventListener('input', (e) => {
+  renderTemplates(e.target.value);
+});
+
+// Close templates modal on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && templatesModal.classList.contains('show')) {
+    templatesModal.classList.remove('show');
   }
 });
 </script>
