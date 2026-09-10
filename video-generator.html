@@ -725,14 +725,19 @@ function getLanguageCode(language) {
 
 // Preview button
 previewBtn.addEventListener('click', () => {
+  console.log('Preview button clicked');
   const script = document.getElementById('script').value.trim();
   const avatar = document.querySelector('input[name="avatar"]:checked').value;
+  
+  console.log('Script:', script);
+  console.log('Avatar:', avatar);
   
   if (script.length < 10) {
     showStatus('❌ Script minimal 10 karakter untuk preview', 'error');
     return;
   }
   
+  console.log('Showing preview section');
   previewText.textContent = script;
   avatarEmoji.textContent = getAvatarEmoji(avatar);
   previewSection.classList.add('show');
